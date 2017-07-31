@@ -1,0 +1,7 @@
+<resources>
+  <string name="app_name">Swiper</string>
+  <string name="gotoIndex">跳到%1$d第个</string>
+  <string name="next">下一个</string>
+  <string name="show">显示</string>
+  <string name="previous">上一个</string>
+</resources>

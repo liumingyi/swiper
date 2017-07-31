@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.liumingyi.swiper.MainActivity"
+    >
+
+
+  <LinearLayout
+      android:id="@+id/buttons_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:orientation="horizontal"
+      >
+    <!--<Button-->
+    <!--android:id="@+id/gotoTv"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="40dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:onClick="gotoIndex"-->
+    <!--android:text="@string/gotoIndex"-->
+    <!--/>-->
+    <Button
+        android:id="@+id/preBtn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:onClick="goPrevious"
+        android:text="@string/previous"
+        />
+
+    <Button
+        android:id="@+id/nextBtn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:onClick="goNext"
+        android:text="@string/next"
+        />
+  </LinearLayout>
+
+  <Button
+      android:id="@+id/button"
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
+      android:layout_above="@id/buttons_layout"
+      android:onClick="showImages"
+      android:text="@string/show"
+      />
+
+  <!--<org.liumingyi.swiper.Swiper-->
+  <!--android:id="@+id/swiper"-->
+  <!--android:layout_width="match_parent"-->
+  <!--android:layout_height="match_parent"-->
+  <!--android:layout_above="@id/button"-->
+  <!--/>-->
+  <org.liumingyi.swiper.AutoSwiper
+      android:id="@+id/autoSwiper"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_above="@id/button"
+      />
+
+  <org.liumingyi.swiper.Indicator
+      android:id="@+id/indicator"
+      android:layout_width="match_parent"
+      android:layout_height="20dp"
+      android:layout_above="@id/button"
+      />
+
+</RelativeLayout>
