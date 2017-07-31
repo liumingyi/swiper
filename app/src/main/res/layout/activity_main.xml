@@ -51,20 +51,20 @@
       android:text="@string/show"
       />
 
-  <!--<org.liumingyi.swiper.Swiper-->
+  <!--<org.liumingyi.swiper.swiper.Swiper-->
   <!--android:id="@+id/swiper"-->
   <!--android:layout_width="match_parent"-->
   <!--android:layout_height="match_parent"-->
   <!--android:layout_above="@id/button"-->
   <!--/>-->
-  <org.liumingyi.swiper.AutoSwiper
+  <org.liumingyi.swiper.swiper.AutoSwiper
       android:id="@+id/autoSwiper"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_above="@id/button"
       />
 
-  <org.liumingyi.swiper.Indicator
+  <org.liumingyi.swiper.swiper.Indicator
       android:id="@+id/indicator"
       android:layout_width="match_parent"
       android:layout_height="20dp"

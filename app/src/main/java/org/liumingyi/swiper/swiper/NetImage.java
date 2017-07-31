@@ -1,4 +1,4 @@
-package org.liumingyi.swiper;
+package org.liumingyi.swiper.swiper;
 
 public class NetImage {
 

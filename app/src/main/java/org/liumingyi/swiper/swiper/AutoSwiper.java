@@ -1,18 +1,37 @@
-package org.liumingyi.swiper;
+package org.liumingyi.swiper.swiper;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import org.liumingyi.swiper.ZhTimer;
 
 /**
  * 自动播放的轮播图<br>
+ *
+ * <p>
+ * - 在Swiper{@link Swiper}基础上，增加了一个Timer作为计时器来实现定时翻页；
+ * - 当只有一张图片时，不会启动Timer；
+ * - 在手指触摸页面时，暂停自动翻页，手指离开，继续翻页。
+ * </p>
+ *
  * Created by liumingyi on 2017/7/27.
  */
 
 public class AutoSwiper extends Swiper {
 
   private static final int INTERVAL_TIME = 2000;
+
   private ZhTimer timer;
+
+  private PageItemTouchListener pagerItemTouchListener = new PageItemTouchListener() {
+    @Override public void onTouchDown() {
+      stopSlide();
+    }
+
+    @Override public void onTouchUp() {
+      startSlide();
+    }
+  };
 
   public AutoSwiper(Context context) {
     this(context, null);
@@ -33,15 +52,7 @@ public class AutoSwiper extends Swiper {
   }
 
   private void initListener() {
-    setOnItemTouchListener(new PageItemTouchListener() {
-      @Override public void onTouchDown() {
-        stopSlide();
-      }
-
-      @Override public void onTouchUp() {
-        startSlide();
-      }
-    });
+    setOnItemTouchListener(pagerItemTouchListener);
   }
 
   /**

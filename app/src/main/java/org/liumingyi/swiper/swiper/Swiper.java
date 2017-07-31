@@ -1,20 +1,13 @@
-package org.liumingyi.swiper;
+package org.liumingyi.swiper.swiper;
 
 import android.content.Context;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageSwitcher;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import com.bumptech.glide.Glide;
-import java.util.ArrayList;
-import java.util.List;
+import org.liumingyi.swiper.R;
 
 /**
  * 滑块视图控件<br>
@@ -49,8 +42,6 @@ public class Swiper extends LinearLayout {
    */
   private static final int TOLERANCE = 15;
 
-  private int startIndex = 1;
-
   /**
    * viewPager滑动监听
    */
@@ -63,23 +54,27 @@ public class Swiper extends LinearLayout {
 
         @Override public void onPageSelected(int position) {
           if (indicator != null) {
-            if (position == adapter.getEffectCount() + startIndex) {
+            int effectCount = adapter.getEffectCount();
+            int startIndex = adapter.getStartIndex();
+            if (position == effectCount + startIndex) {
               position = startIndex;
             } else if (position == 0) {
-              position = adapter.getEffectCount();
+              position = effectCount;
             }
             indicator.setIndex(position - 1);
           }
         }
 
         @Override public void onPageScrollStateChanged(int state) {
-          Log.d("AutoSwipe", "onPageScrollStateChanged >>>> : " + state);
+          //Log.d("AutoSwipe", "onPageScrollStateChanged >>>> : " + state);
           if (state == ViewPager.SCROLL_STATE_IDLE) {
             int index = viewPager.getCurrentItem();
-            if (index == adapter.getEffectCount() + startIndex) {
+            int effectCount = adapter.getEffectCount();
+            int startIndex = adapter.getStartIndex();
+            if (index == effectCount + startIndex) {
               viewPager.setCurrentItem(startIndex, false);
             } else if (index == 0) {
-              viewPager.setCurrentItem(adapter.getEffectCount(), false);
+              viewPager.setCurrentItem(effectCount, false);
             }
           }
         }
@@ -116,6 +111,18 @@ public class Swiper extends LinearLayout {
     }
   };
 
+  private SwiperAdapter.DataChangedListener adapterDataChangedListener =
+      new SwiperAdapter.DataChangedListener() {
+        @Override public void onDataChanged() {
+          //如果只有一页，不显示指示器
+          if (adapter.getEffectCount() == 1) {
+            return;
+          }
+          indicator.reset(adapter.getEffectCount());
+          viewPager.setCurrentItem(adapter.getStartIndex(), false);
+        }
+      };
+
   public Swiper(Context context) {
     this(context, null);
   }
@@ -132,8 +139,6 @@ public class Swiper extends LinearLayout {
   private void initView(Context context) {
     View inflate = inflate(context, R.layout.swiper_layout, this);
     viewPager = inflate.findViewById(R.id.viewpager);
-    adapter = new SwiperAdapter(context);
-    viewPager.setAdapter(adapter);
     viewPager.addOnPageChangeListener(pagerChangeListener);
     viewPager.setOnTouchListener(pagerTouchListener);
   }
@@ -148,7 +153,8 @@ public class Swiper extends LinearLayout {
       if (TextUtils.isEmpty(netImage.getLinkUrl())) {
         postTouchUpEvent();
       } else {
-        itemClickListener.onItemClicked(position, netImage);
+        // ignore this warning
+        itemClickListener.onItemClicked(position, adapter.getItem(position));
       }
     }
   }
@@ -171,13 +177,10 @@ public class Swiper extends LinearLayout {
     }
   }
 
-  /**
-   * 设置要展示的图片 list
-   * {@link NetImage}
-   */
-  public void setNetImages(List<NetImage> images) {
-    adapter.setImageViews(images);
-    viewPager.setCurrentItem(startIndex, false);
+  public void setAdapter(final SwiperAdapter adapter) {
+    this.adapter = adapter;
+    this.viewPager.setAdapter(this.adapter);
+    this.adapter.setOnDataChangedListener(adapterDataChangedListener);
   }
 
   /**
@@ -185,12 +188,7 @@ public class Swiper extends LinearLayout {
    * {@link Indicator}
    */
   public void setIndicator(Indicator indicator) {
-    // 如果只有一页，不现实指示器
-    if (adapter.getEffectCount() == 1) {
-      return;
-    }
     this.indicator = indicator;
-    this.indicator.reset(adapter.getEffectCount());
   }
 
   /**
@@ -240,7 +238,8 @@ public class Swiper extends LinearLayout {
 
   private PageItemClickListener itemClickListener;
 
-  public void setOnPageItemClickListener(PageItemClickListener itemClickListener) {
+  public <T extends NetImage> void setOnPageItemClickListener(
+      PageItemClickListener<T> itemClickListener) {
     this.itemClickListener = itemClickListener;
   }
 
@@ -258,91 +257,5 @@ public class Swiper extends LinearLayout {
     void onTouchDown();
 
     void onTouchUp();
-  }
-
-  /////////////////////////////ViewPager's adapter////////////////////////////////////////////
-
-  public class SwiperAdapter extends PagerAdapter {
-
-    private Context context;
-    private List<ImageView> imageViews = new ArrayList<>();
-    private List<NetImage> images = new ArrayList<>();
-
-    public SwiperAdapter(Context context) {
-      this.context = context;
-    }
-
-    void setImageViews(List<NetImage> images) {
-      this.images.clear();
-      this.images.addAll(images);
-      for (int i = 0, count = images.size(); i <= count + startIndex; i++) {
-        ImageView imageView = new ImageView(context);
-        imageView.setLayoutParams(
-            new ImageSwitcher.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageViews.add(imageView);
-      }
-
-      notifyDataSetChanged();
-    }
-
-    NetImage getItem(int position) {
-      position -= startIndex;
-      if (position < 0 || position >= images.size()) {
-        return null;
-      }
-      return images.get(position);
-    }
-
-    @Override public int getCount() {
-      if (images.size() > 1) {
-        // 为了实现，向前向后的无限滑动，增加两个假页面
-        return images.size() + 1 + startIndex;
-      } else {
-        return images.size();
-      }
-    }
-
-    int getEffectCount() {
-      return images.size();
-    }
-
-    @Override public boolean isViewFromObject(View view, Object object) {
-      return view == object;
-    }
-
-    @Override public ImageView instantiateItem(ViewGroup container, final int position) {
-      ImageView imageView = imageViews.get(position);
-      NetImage netImage;
-      if (position == 0) {
-        netImage = images.get(images.size() - startIndex);
-      } else if (position == getEffectCount() + startIndex) {
-        netImage = images.get(0);
-      } else {
-        netImage = images.get(position - startIndex);
-      }
-      container.addView(imageView);
-      Glide.with(context).load(netImage.getPicUrl()).into(imageView);
-      return imageView;
-    }
-
-    @Override public void destroyItem(ViewGroup container, int position, Object object) {
-      container.removeView((View) object);
-    }
-
-    void onStart() {
-      Glide.with(context).onStart();
-    }
-
-    void onStop() {
-      Glide.with(context).onStop();
-    }
-
-    void onDestroy() {
-      for (ImageView imageView : imageViews) {
-        Glide.clear(imageView);
-      }
-      //Glide.with(context).onDestroy();
-    }
   }
 }
