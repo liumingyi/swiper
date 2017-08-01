@@ -2,7 +2,7 @@ package org.liumingyi.swiper.swiper;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.orhanobut.logger.Logger;
 import org.liumingyi.swiper.ZhTimer;
 
 /**
@@ -65,7 +65,7 @@ public class AutoSwiper extends Swiper {
     if (timer == null) {
       timer = new ZhTimer(new Runnable() {
         @Override public void run() {
-          Log.d("AutoSwipe ------ ", "----------run---------- ");
+          Logger.d("------Timer run------");
           next();
         }
       }, INTERVAL_TIME, true);

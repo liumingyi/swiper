@@ -1,15 +1,15 @@
 package org.liumingyi.swiper.swiper;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-
-import static android.content.ContentValues.TAG;
+import org.liumingyi.swiper.DensityUtils;
+import org.liumingyi.swiper.R;
 
 /**
  * 远点角标指示器<br>
@@ -18,22 +18,21 @@ import static android.content.ContentValues.TAG;
 
 public class Indicator extends View {
 
-  private static final int DEFAULT_STROKE_WIDTH = 20;
-  private static final int DEFAULT_INTERVAL_WIDTH = 50;
+  private static final int DEFAULT_STROKE_WIDTH = 8;//dp
+  private static final int DEFAULT_INTERVAL_WIDTH = 16;//dp
 
   private int count = 0;
   private Paint paint;
-  private int normalColor = Color.WHITE;
-  private int selectedColor = Color.GREEN;
+  private int normalColor;
+  private int selectedColor;
 
-  private int strokeWidth = DEFAULT_STROKE_WIDTH;
-  private int intervalWidth = DEFAULT_INTERVAL_WIDTH;
+  private int strokeWidth;
+  private int intervalWidth;
 
   private int viewWidth;
   private int viewHeight;
 
   private int index;
-  boolean isAscend;
 
   public Indicator(Context context) {
     this(context, null);
@@ -45,10 +44,19 @@ public class Indicator extends View {
 
   public Indicator(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    init();
+    init(context, attrs);
   }
 
-  private void init() {
+  private void init(Context context, AttributeSet attrs) {
+    TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Indicator);
+    strokeWidth = (int) typedArray.getDimension(R.styleable.Indicator_strokeWidth,
+        DensityUtils.dip2px(context, DEFAULT_STROKE_WIDTH));
+    intervalWidth = (int) typedArray.getDimension(R.styleable.Indicator_intervalWidth,
+        DensityUtils.dip2px(context, DEFAULT_INTERVAL_WIDTH));
+    normalColor = typedArray.getColor(R.styleable.Indicator_normalColor, Color.WHITE);
+    selectedColor = typedArray.getColor(R.styleable.Indicator_selectedColor, Color.GREEN);
+    typedArray.recycle();
+
     paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     paint.setColor(normalColor);
     paint.setStrokeWidth(strokeWidth);
@@ -101,7 +109,6 @@ public class Indicator extends View {
 
     int margin = (viewWidth - (intervalWidth + strokeWidth) * count - intervalWidth) / 2;
 
-    Log.d(TAG, "onDraw: " + viewWidth + " , " + viewHeight);
     for (int i = 0; i < count; i++) {
       if (i == index) {
         paint.setColor(selectedColor);
@@ -115,22 +122,6 @@ public class Indicator extends View {
 
   public void reset(int count) {
     this.count = count;
-    invalidate();
-  }
-
-  public void next() {
-    if (index == 0) {
-      isAscend = true;
-    } else if (index == count - 1) {
-      isAscend = false;
-    }
-
-    if (isAscend) {
-      index++;
-    } else {
-      index--;
-    }
-
     invalidate();
   }
 

@@ -30,4 +30,6 @@ dependencies {
 
   // glide
   compile 'com.github.bumptech.glide:glide:3.7.0'
+  // logger
+  compile 'com.orhanobut:logger:1.15'
 }

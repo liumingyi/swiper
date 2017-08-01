@@ -18,8 +18,6 @@ public class MainActivity extends AppCompatActivity {
 
   //private Swiper swiper;
   private AutoSwiper swiper;
-  private Indicator indicator;
-  //private TextView gotoTv;
   private List<ZhNetImage> images = new ArrayList<>();
 
   private SwiperAdapter<ZhNetImage> adapter;
@@ -29,26 +27,18 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     //swiper = (Swiper) findViewById(R.id.swiper);
     swiper = (AutoSwiper) findViewById(R.id.autoSwiper);
-    indicator = (Indicator) findViewById(R.id.indicator);
-    //gotoTv = (TextView) findViewById(R.id.gotoTv);
-    //gotoTv.setText(String.format(getString(R.string.gotoIndex), 0));
-    initNetImages();
-
+    Indicator indicator = (Indicator) findViewById(R.id.indicator);
     adapter = new SwiperAdapter<>(this);
     swiper.setIndicator(indicator);
     swiper.setAdapter(adapter);
-    //swiper.setOnPageItemClickListener(new Swiper.PageItemClickListener() {
-    //  @Override public void onItemClicked(int position, NetImage netImage) {
-    //    Toast.makeText(MainActivity.this, netImage.getTitle(), Toast.LENGTH_LONG).show();
-    //    jumpToWebActivity(netImage);
-    //  }
-    //});
     swiper.setOnPageItemClickListener(new Swiper.PageItemClickListener<ZhNetImage>() {
       @Override public void onItemClicked(int position, ZhNetImage netImage) {
         Toast.makeText(MainActivity.this, netImage.getName(), Toast.LENGTH_LONG).show();
         jumpToWebActivity(netImage);
       }
     });
+
+    initNetImages();
   }
 
   private class ZhNetImage extends NetImage {
@@ -67,12 +57,10 @@ public class MainActivity extends AppCompatActivity {
 
   public void showImages(View view) {
     adapter.setImageViews(images);
-    //indicator.reset(images.size());
     swiper.startSlide();
   }
 
   public void goNext(View view) {
-    //indicator.next();
     swiper.next();
   }
 
@@ -80,13 +68,7 @@ public class MainActivity extends AppCompatActivity {
     swiper.previous();
   }
 
-  //public void gotoIndex(View view) {
-  //  int index = (int) (Math.random() * 5);
-  //  gotoTv.setText(String.format(getString(R.string.gotoIndex), index));
-  //  indicator.setIndex(index);
-  //}
-
-  ///////////////////////////////////////////////////////////////////////
+  ////////////////////////////life cycle, must override///////////////////////////////////////////
 
   @Override protected void onStart() {
     super.onStart();
@@ -97,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
     super.onStop();
     swiper.onStop();
   }
+
+  ///////////////////////////////////////////////////////////////////////
 
   private void initNetImages() {
     //NetImage image =
