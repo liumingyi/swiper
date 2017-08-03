@@ -48,7 +48,6 @@ public class AutoSwiper extends Swiper {
 
   private void init() {
     initListener();
-    startSlide();
   }
 
   private void initListener() {
@@ -59,7 +58,8 @@ public class AutoSwiper extends Swiper {
    * 开始滑动
    */
   public void startSlide() {
-    if (viewPager.getChildCount() <= 1) {
+    // 如果没有或者只有一页，则不设置计时器进行自动滑动。
+    if (adapter.getEffectCount() <= 1) {
       return;
     }
     if (timer == null) {

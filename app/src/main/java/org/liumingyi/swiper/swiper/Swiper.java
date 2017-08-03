@@ -147,15 +147,17 @@ public class Swiper extends LinearLayout {
    * 通知点击事件被触发
    */
   private void postClickedEvent() {
-    if (itemClickListener != null) {
-      int position = viewPager.getCurrentItem();
-      NetImage netImage = adapter.getItem(position);
-      if (TextUtils.isEmpty(netImage.getLinkUrl())) {
-        postTouchUpEvent();
-      } else {
-        // ignore this warning
-        itemClickListener.onItemClicked(position, adapter.getItem(position));
-      }
+    if (itemClickListener == null) {
+      postTouchUpEvent();
+      return;
+    }
+    int position = viewPager.getCurrentItem();
+    NetImage netImage = adapter.getItem(position);
+    if (netImage != null && TextUtils.isEmpty(netImage.getLinkUrl())) {
+      postTouchUpEvent();
+    } else {
+      // ignore this warning
+      itemClickListener.onItemClicked(position, adapter.getItem(position));
     }
   }
 

@@ -6,6 +6,9 @@ public class NetImage {
   private String linkUrl;
   private String title;
 
+  public NetImage() {
+  }
+
   public NetImage(String picUrl, String linkUrl, String title) {
     this.picUrl = picUrl;
     this.linkUrl = linkUrl;
