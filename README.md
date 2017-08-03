@@ -11,3 +11,10 @@
 - 无限轮播
 - 使用 Glide 通过 url 获取图片 
     
+### 图片类 - NetImage
+
+包含字段：
+
+- picUrl 图片链接
+- linkUrl 点击图片的跳转链接
+- title 图片名称
